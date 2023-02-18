@@ -7,100 +7,74 @@ function splitArr(input) {
   return inputArr
 }
 
-// Parse through the input array and create an object for each patient. Return array of objects.
-function createPatientObjs(inputArr) {
-  class PatientObj {
-    constructor(name) {
-      this.name = name;
-      this.numberOfTreatments = 0;
-      this.durationOfStay = {
-        minutes: 0,
-        hours: 0
-      };
-      this.dateIntake = '';
-      this.dateDischarge = '';
-      this.typesOfTreatments = {};
+// Parse through the input array and create a map for each patient. Return a map of maps.
+function createPatientMaps(inputArr) {
+  const patientMaps = new Map()
+
+  for (const line of inputArr) {
+    if (line[0] === 'Patient') {
+      const name = line[1]
+      patientMaps.set(name, new Map(
+        [
+          ['name', name],
+          ['durationOfStay', {
+            minutes: null,
+            hours: null
+          }],
+          ['dateIntake', null],
+          ['dateDischarge', null],
+          ['treatments', new Set()]
+        ]
+      ))
     }
   }
 
-  const patientObjs = []
-
-  for (const elem of inputArr) {
-    if (elem[0] === 'Patient') {
-      let name = elem[1]
-      let newPatient = new PatientObj(name)
-      patientObjs.push(newPatient)
-    }
-  }
-
-  return patientObjs
+  return patientMaps
 }
 
-// Parse through the input array and set the patient objects.
-function setPatientObjs(patientObjs, inputArr) {
-  let action, date, name, treatment
+// Parse through the input array and set "actions" to patient maps.
+function setPatientMaps(patientMaps, inputArr) {
+  for (const line of inputArr) {
+    if (line[0] !== 'Action') continue
+    const action = line[1]
+    const name = line[2]
+    const date = line[3]
+    const treatment = line[4]
 
-  for (const elem of inputArr) {
-    if (elem[0] !== 'Action') continue
-
-    action = elem[1]
-    name = elem[2]
-    date = elem[3]
-    treatment = elem[4]
-
-    for (let i = 0; i < patientObjs.length; i++) {
-      if (patientObjs[i].name === name) {
-        if (action === "Intake") patientObjs[i].dateIntake = date
-        else if (action === "Discharge") patientObjs[i].dateDischarge = date
-        else if (action === "Treatment") {
-          if (patientObjs[i].typesOfTreatments[treatment] === true) break
-          patientObjs[i].typesOfTreatments[treatment] = true
-          patientObjs[i].numberOfTreatments = patientObjs[i].numberOfTreatments + 1
-        }
-      }
-    }
+    if (action === 'Intake') patientMaps.get(name).set('dateIntake', date)
+    if (action === 'Discharge') patientMaps.get(name).set('dateDischarge', date)
+    if (action === 'Treatment') patientMaps.get(name).get('treatments').add(treatment)
   }
 
-  return patientObjs
+  return patientMaps
 }
 
-// Set total duration in hours and minutes.
-function setPatientObjsDuration(patientObjs) {
-  let intake, discharge
+// Iterate through patient maps and set total duration hours and minutes.
+function setPatientDuration(patientMaps) {
+  for (const [key, value] of patientMaps) {
+    const dateIntake = new Date(value.get('dateIntake'))
+    const dateDischarge = new Date(value.get('dateDischarge'))
 
-  for (const patient of patientObjs) {
-    intake = new Date(patient.dateIntake)
-    discharge = new Date(patient.dateDischarge)
+    const milliseconds = Math.abs(dateIntake - dateDischarge)
+    const minutes = ((milliseconds / 1000 / 60) % 60).toFixed(1)
+    const hours = Math.floor((milliseconds / 1000 / 60) / 60).toFixed(1)
 
-    let milliseconds = Math.abs(intake - discharge)
-    let minutes = milliseconds / 1000 / 60
-
-    let hours = (Math.floor(minutes / 60)).toFixed(1)
-    minutes = (minutes % 60).toFixed(1)
-    
-    patient.durationOfStay.minutes = minutes
-    patient.durationOfStay.hours = hours
+    value.get('durationOfStay').minutes = minutes
+    value.get('durationOfStay').hours = hours
   }
 
-
-  return patientObjs
+  return patientMaps
 }
 
-// Format string and output result.
-function formatPatientObjsOutput(patientObjs) {
-  for (const patient of patientObjs) {
-    console.log(`Patient ${patient.name} stayed for ${patient.durationOfStay.hours} hours and ${patient.durationOfStay.minutes} minutes and received ${patient.numberOfTreatments} treatments`)
+// Iterate through patient maps, format strings, and output result.
+function formatPatientMaps(patientMaps) {
+  for (const [key, value] of patientMaps) {
+    console.log(`Patient ${value.get('name')} stayed for ${value.get('durationOfStay').hours} hours and ${value.get('durationOfStay').minutes} minutes and received ${value.get('treatments').size} treatments`)
   }
 }
 
 const inputArr = splitArr(input)
-let patientObjs = createPatientObjs(inputArr)
-patientObjs = setPatientObjs(patientObjs, inputArr)
-patientObjs = setPatientObjsDuration(patientObjs)
-formatPatientObjsOutput(patientObjs)
-
-/*
-Patient John stayed for 222.0 hours and 13.0 minutes and received 4 treatments
-Patient Anne stayed for 123.0 hours and 34.0 minutes and received 1 treatments
-Patient Polly stayed for 24.0 hours and 0.0 minutes and received 2 treatments
-*/
+let patientMaps = createPatientMaps(inputArr)
+patientMaps = setPatientMaps(patientMaps, inputArr)
+patientMaps = setPatientDuration(patientMaps)
+formatPatientMaps(patientMaps)

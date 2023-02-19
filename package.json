@@ -1,0 +1,24 @@
+{
+  "name": "medasync",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobinHerzig/medical-challenge.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobinHerzig/medical-challenge/issues"
+  },
+  "homepage": "https://github.com/RobinHerzig/medical-challenge#readme",
+  "devDependencies": {
+    "jest": "^29.4.3",
+    "prettier": "2.8.4"
+  }
+}

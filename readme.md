@@ -115,9 +115,9 @@ When writing this program, one of my goals was to ensure optimal performance for
 
 ## Installation:
 
-1. Download or clone the repo onto your local machine.
-2. In your terminal, enter `npm install` to download and install the dependencies.
-3. In the terminal, enter `npm test` to run the test.
+1. Download the bundle onto your local machine.
+2. To unpack `medasync.bundle`, navigate the terminal into the directory and enter `git init` and `git pull medasync.bundle main` to unpack the bundle.
+3. To run the tests, enter `npm install` and `npm test`.
 
 ## Feedback:
 

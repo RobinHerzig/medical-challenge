@@ -15,8 +15,8 @@ function formatInput(input) {
 
 /**
  * If the patient has multiple names, join them as a single element.
- * @param {array<string>} line A split line from the input.
- * @return {array<string>} A split line with all name information in a single element.
+ * @param {Array<string>} line A split line from the input.
+ * @return {Array<string>} A split line with all name information in a single element.
  */
 function joinPatientNames(line) {
   const keyword = line[0];
@@ -49,7 +49,7 @@ function joinPatientNames(line) {
 /**
  * Parse through the input array and create a map for each patient. Return a map of maps.
  * @param {Array<Array<string>>} inputArr Data formatted into 2 dimensional array.
- * @return {Map<Map<string>>} Data formatted into 2 dimensional maps.
+ * @return {Map<string, Map<string, any>>} Data formatted into 2 dimensional maps.
  */
 function createPatientMaps(inputArr) {
   const patientMaps = new Map();
@@ -81,9 +81,9 @@ function createPatientMaps(inputArr) {
 
 /**
  * Parse through the input array and set "actions" to patient maps.
- * @param {Map<Map<string>>} patientMaps Data formatted into 2 dimensional maps.
+ * @param {Map<string, Map<string, any>>} patientMaps Data formatted into 2 dimensional maps.
  * @param {Array<Array<string>>} inputArr Data formatted into 2 dimensional array.
- * @return {Map<Map<string>>} Data formatted into 2 dimensional maps.
+ * @return {Map<string, Map<string, any>>} Data formatted into 2 dimensional maps.
  */
 function setPatientActions(patientMaps, inputArr) {
   for (const line of inputArr) {
@@ -100,8 +100,8 @@ function setPatientActions(patientMaps, inputArr) {
 
 /**
  * Iterate through patient maps and set total duration hours and minutes.
- * @param {Map<Map<string>>} patientMaps Data formatted into 2 dimensional maps.
- * @return {Map<Map<string>>} Data formatted into 2 dimensional maps.
+ * @param {Map<string, Map<string, any>>} patientMaps Data formatted into 2 dimensional maps.
+ * @return {Map<string, Map<string, any>>} Data formatted into 2 dimensional maps.
  */
 function setPatientDuration(patientMaps) {
   for (const patient of patientMaps.values()) {
@@ -121,7 +121,7 @@ function setPatientDuration(patientMaps) {
 
 /**
  * Iterate through patient maps, format strings, and output result.
- * @param {Map<Map<string>>} patientMaps Data formatted into 2 dimensional maps.
+ * @param {Map<string, Map<string, any>>} patientMaps Data formatted into 2 dimensional maps.
  * @return {Array<string>} Formatted patient strings inside an array.
  */
 function createPatientStrings(patientMaps) {

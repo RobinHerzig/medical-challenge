@@ -86,17 +86,25 @@ I addressed the second case during the initial splitting of the input into array
 
 To solve the problem, I created conditions that compared the actual line length to the expected line length, taking into account whether it was a patient or action line, and, if the latter, the type of action. By considering the expected format of the line, the data can be manipulated as follows:
 
-```const line = ['Action', 'Intake', 'John', 'Sr', '2023-01-06T09:45:00Z'];```
-
-```let lineFixed = [line[0], line[1], ..., line.at(-1)];```
-
+```
+const line = ['Action', 'Intake', 'John', 'Sr', '2023-01-06T09:45:00Z'];
+```
+```
+let lineFixed = [line[0], line[1], ..., line.at(-1)];
+```
 By deduction, the elements inside `...` can only contain the patient's name. It can be sliced from the original array and joined into a single string:
 
-```const name = line.slice(2, line.length - 1).join(' ');``` // 'John Sr'
+```
+const name = line.slice(2, line.length - 1).join(' '); // 'John Sr'
+```
+```
+lineFixed = [line[0], line[1], name, line.at(-1)];
+```
+End result:
 
-```lineFixed = [line[0], line[1], name, line.at(-1)];```
-
-End result: `['Action', 'Intake', 'John Sr', '2023-01-06T09:45:00Z']`
+```
+['Action', 'Intake', 'John Sr', '2023-01-06T09:45:00Z']
+```
 
 ## Issues:
 
@@ -121,4 +129,6 @@ When writing this program, one of my goals was to ensure optimal performance for
 
 ## Feedback:
 
-Thanks for this challenge, I enjoyed it a lot. If you have any questions or comments, don't hesitate to contact me.
+Thanks for this challenge, I enjoyed it a lot. If you have any questions or comments, please don't hesitate to contact me.
+
+Author: Robin Herzig

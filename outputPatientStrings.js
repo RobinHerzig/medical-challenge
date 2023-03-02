@@ -1,3 +1,6 @@
+const { calculatePatientScores } = require('./calculatePatientScores')
+
+
 /**
  * Split the input data so each line is an element. Then split each line into an array of words.
  * @param {string} input Test file.
@@ -70,7 +73,8 @@ function createPatientMaps(inputArr) {
           ],
           ['dateIntake', null],
           ['dateDischarge', null],
-          ['treatments', new Set()]
+          ['treatments', []],
+          ['treatmentSum', 0]
         ])
       );
     }
@@ -91,7 +95,7 @@ function setPatientActions(patientMaps, inputArr) {
 
     if (keyword !== 'Action') continue;
     if (action === 'Intake') patientMaps.get(name).set('dateIntake', date);
-    if (action === 'Treatment') patientMaps.get(name).get('treatments').add(treatment);
+    if (action === 'Treatment') patientMaps.get(name).get('treatments').push(treatment);
     if (action === 'Discharge') patientMaps.get(name).set('dateDischarge', date);
   }
 
@@ -129,7 +133,7 @@ function createPatientStrings(patientMaps) {
   for (const patient of patientMaps.values()) {
     const patientStr = `Patient ${patient.get('name')} stayed for ${patient.get('durationOfStay').hours} hours and ${
       patient.get('durationOfStay').minutes
-    } minutes and received ${patient.get('treatments').size} treatments`;
+    } minutes with a total score of ${patient.get('treatmentSum')}`;
     output.push(patientStr);
   }
 
@@ -140,6 +144,8 @@ function outputPatientStrings(input) {
   const inputArr = formatInput(input);
   let patientMaps = createPatientMaps(inputArr);
   patientMaps = setPatientActions(patientMaps, inputArr);
+  patientMaps = calculatePatientScores(patientMaps);
+  console.log(patientMaps)
   patientMaps = setPatientDuration(patientMaps);
   patientOutput = createPatientStrings(patientMaps);
 
